@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test STAR - Evaluación de Habilidades</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        body {
+    font-family: 'Inter', sans-serif;
+    background: url('/img/fondo.jpg') no-repeat center center fixed; 
+    background-size: cover; /* Asegura que la imagen cubra toda el área */
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+    overflow: hidden;
+}
+
+#container {
+    width: 95%;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.85); /* Fondo ligeramente opaco */
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+
+}
+
+        #container:hover {
+            transform: rotateX(0) scale(1);
+        }
+
+        #login-form, #quiz-container {
+            padding: 40px;
+    text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+    padding: 15px;
+    border: 2px solid rgba(0, 0, 0, 0.904);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.85); /* Fondo más opaco para los campos */
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        #login-btn, #submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        #login-btn:hover, #submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+        }
+
+        .question {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(0, 0, 0, 0.904);
+        }
+
+        .option {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(0, 0, 0, 0.904);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: rgba(106, 107, 105, 0.884);
+            transform: scale(1.03);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: rgb(0, 0, 0);
+            border: 8px solid rgba(0, 0, 0, 0.904);
+        }
+
+        #result {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: rgb(0, 0, 0);
+            padding: 50px;
+            text-align: center;
+        }
+        /* Agrega esto al final de tu bloque de estilos existente */
+/* Estilos personalizados para la barra de desplazamiento */
+::-webkit-scrollbar {
+    width: 12px; /* Ancho de la barra de desplazamiento */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1); /* Color de fondo del track */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+}
+
+/* Asegúrate de que el body y el contenedor puedan hacer scroll si es necesario */
+body {
+    overflow-y: auto; /* Permite el scroll vertical */
+}
+
+#container {
+    max-height: 90vh; /* Altura máxima del contenedor */
+    overflow-y: auto; /* Permite scroll dentro del contenedor */
+}
+
+/* Estilos adicionales para mejorar la experiencia de scroll */
+html {
+    scrollbar-width: thin; /* Para Firefox */
+    scrollbar-color: var(--primary-color) rgba(255,255,255,0.1); /* Para Firefox */
+}
+
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div></div>
+        <div></div>
+    </div>
+
+    <div id="container">
+        <div id="login-form">
+            <h1></h1>
+            <div class="form-group">
+                <label for="full-name">Nombre Completo:</label>
+                <input type="text" id="full-name" required>
+            </div>
+            <div class="form-group">
+                <label for="position">Cargo:</label>
+                <input type="text" id="position" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Número de Teléfono:</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Fecha:</label>
+                <input type="date" id="date" required>
+            </div>
+            <button id="login-btn">Iniciar Sesión</button>
+        </div>
+
+        <div id="quiz-container" style="display:none;">
+            
+            <div id="quiz"></div>
+            <button id="submit-btn">Finalizar Test</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+            const questions = [
+        {
+            text: "Situación: Un cliente te ha enviado una queja sobre el servicio. ¿Qué haces?",
+            options: [
+                { text: "Ignorar la queja.", points: 2 },
+                { text: "Disculparte y ofrecer una solución o compensación.", points: 3 },
+                { text: "Decirle al cliente que su queja no tiene fundamento.", points: 2 },
+                { text: "Pedirle que retire la queja inmediatamente.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Estás a cargo de un proyecto que requiere habilidades técnicas que no dominas. ¿Qué haces?",
+            options: [
+                { text: "Delegar todo el trabajo a un colega con más experiencia.", points: 2 },
+                { text: "Investigar, pedir ayuda y aprender lo necesario para completar el proyecto.", points: 3 },
+                { text: "Aceptar el proyecto sin hacer nada para mejorar tu habilidad.", points: 2 },
+                { text: "Rechazar el proyecto porque no te sientes capacitado.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Tienes que trabajar en equipo, pero uno de los miembros no está cumpliendo con su parte. ¿Cómo manejarías esto?",
+            options: [
+                { text: "Hablar con él para entender su problema y ayudarle.", points: 2 },
+                { text: "Ignorar el problema y seguir trabajando.", points: 3 },
+                { text: "Asumir su parte del trabajo.", points: 2 },
+                { text: "Hablar con el jefe para que lo reemplacen.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Durante una negociación con un proveedor, ambos tienen desacuerdos sobre los términos del contrato. ¿Cómo actuarías?",
+            options: [
+                { text: "Insistir en tus condiciones sin ceder.", points: 2 },
+                { text: "Buscar una solución que beneficie a ambas partes.", points: 3 },
+                { text: "Cerrar el trato lo antes posible, sin importar las condiciones.", points: 2 },
+                { text: "Cancelar la negociación y buscar otro proveedor.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Un proyecto ha sufrido retrasos por problemas técnicos imprevistos. ¿Qué harías?",
+            options: [
+                { text: "Acelerar el trabajo sin cambiar el plazo.", points: 2 },
+                { text: "Revisar el plan y buscar una solución para recuperar el tiempo.", points: 3 },
+                { text: "Informar a todos que el proyecto se retrasará indefinidamente.", points: 2 },
+                { text: "Asumir que ya no se puede cumplir el plazo y cancelar el proyecto.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Estás a cargo de un proyecto y un miembro del equipo constantemente interrumpe a los demás. ¿Cómo lo manejarías?",
+            options: [
+                { text: "Ignorarlo, ya que su participación es importante.", points: 2 },
+                { text: "Pedirle educadamente que respete el turno de palabra.", points: 3 },
+                { text: "Pedirle que se calle para que los demás hablen.", points: 2 },
+                { text: "Hablar con él después de la reunión sobre el comportamiento.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Tienes que entregar un informe importante, pero te das cuenta de que cometiste un error. ¿Qué haces?",
+            options: [
+                { text: "Enviar el informe tal como está, con la esperanza de que no se note el error.", points: 2 },
+                { text: "Corregir el error inmediatamente y entregar una versión corregida.", points: 3 },
+                { text: "Informar a tu jefe que cometiste un error y que no se podrá entregar a tiempo.", points: 2 },
+                { text: "Pedir a otro colega que corrija el error por ti.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Un compañero de trabajo te pide ayuda para resolver un problema que no sabes cómo solucionar. ¿Cómo respondes?",
+            options: [
+                { text: "Decirle que no puedes ayudarle porque no sabes la respuesta.", points: 2 },
+                { text: "Intentar resolver el problema junto con él, buscando información si es necesario.", points: 3 },
+                { text: "Derivar al compañero a otra persona que pueda ayudarle.", points: 2 },
+                { text: "Ignorar su solicitud de ayuda porque tienes otras prioridades.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Recibes una crítica negativa de tu jefe sobre tu desempeño. ¿Cómo reaccionas?",
+            options: [
+                { text: "Defender tu trabajo y argumentar en contra de la crítica.", points: 2 },
+                { text: "Escuchar la crítica, pedir ejemplos y buscar maneras de mejorar.", points: 3 },
+                { text: "Ignorar la crítica, ya que consideras que no es justa.", points: 2 },
+                { text: "Aceptar la crítica sin más y no hacer nada al respecto.", points: 1 }
+            ]
+        },
+        {
+            text: "Situación: Un miembro del equipo no está rindiendo al nivel esperado y está afectando el progreso del grupo. ¿Cómo actuarías?",
+            options: [
+                { text: "Ignorar el problema y esperar que mejore solo.", points: 2 },
+                { text: "Hablar en privado con el miembro del equipo para ofrecer ayuda y mejorar su rendimiento.", points: 3 },
+                { text: "Criticar públicamente al miembro para presionarlo a mejorar.", points: 2 },
+                { text: "Reemplazar al miembro del equipo inmediatamente.", points: 1 }
+            ]
+        }
+    ];
+
+
+
+        function renderQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = questions.map((question, index) => `
+                <div class="question">
+                    <div class="question-title">Pregunta ${index + 1}: ${question.text}</div>
+                    <div class="options">
+                        ${question.options.map((option, optionIndex) => `
+                            <div class="option" data-question="${index}" data-points="${option.points}" onclick="selectOption(this)">
+                                ${option.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectOption(element) {
+            const questionOptions = document.querySelectorAll(`.option[data-question="${element.dataset.question}"]`);
+            questionOptions.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            const selectedOptions = document.querySelectorAll('.option.selected');
+            
+            if (selectedOptions.length !== questions.length) {
+                alert('Por favor, responda todas las preguntas antes de finalizar.');
+                return null;
+            }
+
+            selectedOptions.forEach(option => {
+                totalScore += parseInt(option.dataset.points);
+            });
+            return totalScore;
+        }
+
+        function showResult() {
+            const totalScore = calculateScore();
+            
+            if (totalScore === null) return;
+
+            const resultContainer = document.getElementById('result');
+            let resultText = '';
+
+            if (totalScore >= 26) {
+                resultText = `
+                    <h2>Resultado Final</h2>
+                    <p>Querido colaborador,<br>
+                    ¡Enhorabuena! Usted obtuvo una puntuación de ${totalScore} puntos, posicionándose en el nivel de "excelente". Esto demuestra que tiene un alto nivel de competencia en la resolución de problemas, liderazgo y colaboración. Su capacidad para tomar decisiones efectivas y reflexivas es un modelo a seguir.</p>
+                `;
+            } else if (totalScore >= 20) {
+                resultText = `
+                    <h2>Resultado Final</h2>
+                    <p>Querido colaborador,<br>
+                    ¡Felicidades! Usted obtuvo una puntuación de ${totalScore} puntos, clasificándose en el nivel de "bueno". Esto indica que tiene una sólida habilidad para manejar situaciones complejas, tomar decisiones acertadas y colaborar eficazmente. Sin embargo, aún puede mejorar.</p>
+                `;
+            } else if (totalScore >= 15) {
+                resultText = `
+                    <h2>Resultado Final</h2>
+                    <p>Querido colaborador,<br>
+                    Usted obtuvo una puntuación de ${totalScore} puntos, ubicándose en el nivel de "aceptable". Esto refleja un desempeño razonable en la resolución de problemas y la toma de decisiones, aunque existen oportunidades para avanzar hacia niveles más altos.</p>
+                `;
+            } else {
+                resultText = `
+                    <h2>Resultado Final</h2>
+                    <p>Querido colaborador,<br>
+                    Usted obtuvo una puntuación de ${totalScore} puntos, lo que indica que se encuentra en el nivel de "necesita mejorar". Esto significa que existen áreas clave en las que puede trabajar para fortalecer sus habilidades en la resolución de problemas, la toma de decisiones y la colaboración. Para apoyarlo en su desarrollo, le recomendamos inscribirse en nuestro curso de Resolución de Conflictos y Negociación.</p>
+                `;
+            }
+
+            document.getElementById('quiz-container').style.display = 'none';
+            resultContainer.innerHTML = resultText;
+            resultContainer.style.display = 'block';
+        }
+
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const fullName = document.getElementById('full-name').value;
+            const position = document.getElementById('position').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const date = document.getElementById('date').value;
+
+            if (fullName && position && phone && email && date) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'block';
+                renderQuiz();
+            } else {
+                alert("Por favor, complete todos los campos obligatorios.");
+            }
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', showResult);
+    </script>
+</body>
+</html>
